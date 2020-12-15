@@ -1,0 +1,26 @@
+.container-custom {
+    margin: 12px 0;
+    max-width: 640px;
+    width: 100%;
+    overflow: auto;
+    overflow-x: hidden;
+}
+textarea {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 100px !important;
+}
+.container-yt {
+    position: relative;
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    height: 0;
+    padding-bottom: 60%;
+}
+iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
