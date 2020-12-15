@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { flexClass } from './../App'
+import { flexClass } from '../App'
 
 export const Container = ({ children, state }) => {
     return <>

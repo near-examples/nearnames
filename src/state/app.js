@@ -23,8 +23,8 @@ export const onAlert = (message) => async ({update}) => {
         keyframes: [
             {translateX: -window.innerWidth, duration: 0},
             {translateX: 0, duration: 500},
-            {translateX: 0, duration: 2500},
-            {translateX: window.innerWidth, duration: 250},
+            {translateX: 0, duration: 2000},
+            {translateX: window.innerWidth, duration: 500},
         ],
     });
     setTimeout(() => update('app.alert', null), 3000)
