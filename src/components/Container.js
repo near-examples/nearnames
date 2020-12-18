@@ -4,6 +4,7 @@ import { flexClass } from '../App'
 
 export const Container = ({ children, state }) => {
     return <>
+        <div class="background"></div>
         <div class={flexClass}>
             <div class="container container-custom">
                 {children}

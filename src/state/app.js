@@ -35,10 +35,11 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
 
     const url = new URL(window.location.href)
     const key = url.searchParams.get('key')
+    const from = url.searchParams.get('from')
     const accountId = url.searchParams.get('accountId')
-    if (key && accountId) {
+    if (key && from && accountId) {
         const { seedPhrase, publicKey } = generateSeedPhrase()
-        update('accountData', { key, accountId, seedPhrase, publicKey })
+        update('accountData', { key, from, accountId, seedPhrase, publicKey })
     } else {
         dispatch(initNear());
     }

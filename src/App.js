@@ -35,8 +35,10 @@ const App = () => {
     if (funding) {
         children = <>
             <div class={flexClass}>
-                <h2>Creating Account...</h2>
                 <h2>DO NOT CLOSE / REFRESH THIS PAGE</h2>
+            </div>
+            <div class={flexClass}>
+                <h2>Creating Account...</h2>
             </div>
         </>
     }

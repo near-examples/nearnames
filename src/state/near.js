@@ -38,7 +38,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     });
 
     // check links, see if they're still valid
-    const links = get(ACCOUNT_LINKS, [])
+    const links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     console.log('links', links)
     for (let i = 0; i < links.length; i++) {
         const { key, accountId } = links[i]
