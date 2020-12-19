@@ -1,12 +1,18 @@
 import * as nearAPI from 'near-api-js'
-import { BN } from 'bn.js'
 import { get, set, del } from '../utils/storage'
+
+import { config } from './config'
+
+const {
+    FUNDING_DATA, ACCOUNT_LINKS, GAS,
+    networkId, nodeUrl, walletUrl
+} = config
 
 const {
     KeyPair,
     InMemorySigner,
     transactions: {
-        functionCall, addKey, deleteKey, fullAccessKey
+        addKey, deleteKey, fullAccessKey
     },
     utils: {
         PublicKey,
@@ -15,13 +21,6 @@ const {
         }
     }
 } = nearAPI
-
-const FUNDING_DATA = '__FUNDING_DATA'
-const ACCOUNT_LINKS = '__ACCOUNT_LINKS'
-const GAS = new BN('200000000000000').toString()
-const networkId = 'default'
-const nodeUrl = 'https://rpc.testnet.near.org'
-const walletUrl = 'https://wallet.testnet.near.org'
 
 export const initNear = () => async ({ update, getState, dispatch }) => {
 
@@ -38,10 +37,9 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     });
 
     // check links, see if they're still valid
-    const links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
-    console.log('links', links)
+    let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     for (let i = 0; i < links.length; i++) {
-        const { key, accountId } = links[i]
+        const { key, accountId, claimed } = links[i]
         const account = new nearAPI.Account(near.connection, accountId);
         try {
             const accessKeys = await account.getAccessKeys()
@@ -56,6 +54,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             console.warn(e)
         }
     }
+    const claimed = links.filter(({claimed}) => !!claimed)
+    links = links.filter(({claimed}) => !claimed)
 
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near);
@@ -79,20 +79,19 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             update('app', {accountTaken: false, wasValidated: true})
         }
     }
-    wallet.fundAccount = async (amount, accountId) => {
-        console.log(amount, accountId)
+    wallet.fundAccount = async (amount, accountId, recipientName) => {
         if (parseInt(amount, 10) < 5 || accountId.length < 2 || accountId.length > 48) {
             return update('app.wasValidated', true)
         }
         const keyPair = KeyPair.fromRandom('ed25519')
-        set(FUNDING_DATA, { key: keyPair.secretKey, accountId })
+        set(FUNDING_DATA, { key: keyPair.secretKey, accountId, recipientName })
         await contract.send({ public_key: keyPair.publicKey.toString() }, GAS, parseNearAmount(amount))
     }
 
-    update('', { near, wallet, links })
+    update('', { near, wallet, links, claimed })
 };
 
-export const hasFundingKeyFlow = ({ key, accountId }) => async ({ update, getState, dispatch }) => {
+export const hasFundingKeyFlow = ({ key, accountId, recipientName }) => async ({ update, getState, dispatch }) => {
     const keyPair = KeyPair.fromString(key)
     const signer = await InMemorySigner.fromKeyPair(networkId, 'testnet', keyPair)
     const near = await nearAPI.connect({
@@ -113,7 +112,7 @@ export const hasFundingKeyFlow = ({ key, accountId }) => async ({ update, getSta
         }, GAS, '0')
 
         const links = get(ACCOUNT_LINKS, [])
-        links.push({ key: newKeyPair.secretKey, accountId })
+        links.push({ key: newKeyPair.secretKey, accountId, recipientName })
         set(ACCOUNT_LINKS, links)
     } catch (e) {
         if (e.message.indexOf('no matching key pair found') === -1) {
@@ -130,8 +129,6 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
     const state = getState()
     const { key, accountId, publicKey } = state.accountData
 
-    console.log(key)
-
     const keyPair = KeyPair.fromString(key)
     const signer = await InMemorySigner.fromKeyPair(networkId, accountId, keyPair)
     const near = await nearAPI.connect({
@@ -145,5 +142,6 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
     ]
 
     const result = await account.signAndSendTransaction(accountId, actions)
-    console.log('result', result)
+    
+    return result
 }

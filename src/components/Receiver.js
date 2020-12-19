@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import copy from 'copy-to-clipboard';
+import { share } from '../utils/mobile';
 import anime from 'animejs/lib/anime.es.js';
 import { onAlert } from '../state/app';
-import { keyRotation } from '../state/near';
-
+import { getVideoId } from '../utils/youtube'
 import { btnClass, qs } from '../App'
 
 import stocking from '../img/stocking.svg'
 
 export const Receiver = ({ state, dispatch }) => {
 
-    const { accountId, from, seedPhrase } = state.accountData
+    const { accountId, from, seedPhrase, message, link } = state.accountData
 
     const [videoReady, setVideoReady] = useState(false)
+    const [claiming, setClaiming] = useState(false)
+    const [success, setSuccess] = useState(0)
 
     useEffect(() => {
         var tag = document.createElement('script');
@@ -23,7 +24,7 @@ export const Receiver = ({ state, dispatch }) => {
 
         window.onYouTubeIframeAPIReady = () => {
             window.player = new YT.Player('player-yt', {
-                videoId: 'dQw4w9WgXcQ',
+                videoId: link ? getVideoId(link) : 'dQw4w9WgXcQ',
                 events: {
                     'onReady': () => setVideoReady(true),
                 }
@@ -31,11 +32,47 @@ export const Receiver = ({ state, dispatch }) => {
         }
     }, [])
 
+
+    if (claiming) {
+        return <div class="container container-custom">
+            <h2>DO NOT CLOSE OR REFRESH THIS PAGE</h2>
+            <h2>Claiming Your Account...</h2>
+        </div>
+    }
+
+    if (success === 1) {
+        return <div class="container container-custom">
+            <h2>Congratulations!</h2>
+            <ul>
+                <li>Your seed phrase is like a password.</li>
+                <li>Do not share it with anyone!</li>
+                <li>Your account is forever tied to this phrase. You can log into or recover your account with your seed phrase at wallet.near.org from now on!</li>
+            </ul>
+            <a href="https://wallet.near.org/recover-seed-phrase" target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
+
+            <p><b>Happy Holidays from your friends at NEAR!</b></p>
+
+            
+            <div class="container text-center mt-5">
+                <p>Questions? Comments? Cookies?<br />Hit us up <a href="https://twitter.com/NEARProtocol?s=20" target="_blank">@NEARProtocol on Twitter</a> 🌈</p>
+            </div>
+
+            <div class="container text-center mt-5">
+
+            <img class="mini-stocking" src={stocking} />
+
+            </div>
+        </div>
+    }
+
     return <>
+
         <div class="text-center mb-5">
-            <h1>Congratulations</h1>
-            <p>{from} has gifted you the NEAR account</p>
-            <p><strong>{accountId}</strong></p>
+            <h3>Holiday Cheer is NEAR</h3>
+            <p>Welcome to the NEAR blockchain!</p>
+            <p><b>{from}</b> has gifted you some NEAR tokens and the account name:</p>
+            <p><b>{accountId}</b></p>
+            {message && message.length > 0 && <p>{message}</p>}
         </div>
 
         <div class="position-yt mb-3">
@@ -47,9 +84,9 @@ export const Receiver = ({ state, dispatch }) => {
         </div>
 
         <div class="wrap-stocking">
-            <div class="stocking-cta">{videoReady ? '👇 Click 👇' : ''}</div>
+            <div class="stocking-cta">{videoReady ? '👇 Open Stocking 👇' : ''}</div>
             <img class="stocking" src={stocking} onClick={() => {
-                if (!videoReady) return 
+                if (!videoReady) return
                 window.player.playVideo()
                 setVideoReady(false)
                 // qs('#ytplayer').src += '&autoplay=1'
@@ -61,7 +98,7 @@ export const Receiver = ({ state, dispatch }) => {
                         { opacity: 1, translateX: 25, translateY: -Math.min(200, window.innerWidth / 5), scaleX: 0.5, scaleY: 0.5, duration: 1000 },
                         { translateX: 0, translateY: -25, scaleX: 1, scaleY: 1, duration: 250, easing: 'easeOutCubic' },
                     ],
-                    complete: function() {
+                    complete: function () {
                         anime({
                             targets: '.stocking',
                             opacity: 0,
@@ -83,26 +120,21 @@ export const Receiver = ({ state, dispatch }) => {
 
         <div class="instructions">
 
+            <p>
+                Now this part is on you. Your seed phrase is like an account password, but we do not store it for you and can't recover it if you forget: if you lose it, that's it.
+            </p>
+
             <ol>
-                <li>Write these words down in order!</li>
-                <li>DO NOT SHARE IT</li>
-                <li>You CANNOT recover your account without these words in this order!</li>
+                <li>Write these 12 words down in this exact order.</li>
+                <li>Do not share them with anyone! This phrase is the key to your NEAR tokens, so keep it somewhere safe.</li>
+                <li>Your account is forever tied to this recovery phrase. You can log into or recover your account with your seed phrase at <a href="https://wallet.near.org" target="_blank">wallet.near.org</a> from now on!</li>
             </ol>
 
-            <button class={btnClass} onClick={async () => {
-                if (navigator.share) {
-                    navigator.share({
-                        text: seedPhrase
-                    }).catch((e) => {
-                        copy(seedPhrase)
-                    });
-                } else {
-                    copy(seedPhrase)
-                }
+            <button class={btnClass} onClick={() => {
+                share(seedPhrase)
                 dispatch(onAlert('Copied!'))
-
             }}>
-                Copy
+                COPY SEED PHRASE
             </button>
 
             <div class="form-floating mb-3">
@@ -110,7 +142,19 @@ export const Receiver = ({ state, dispatch }) => {
                 <label for="seedPhrase">Seed Phrase</label>
             </div>
 
-            <button class={btnClass} onClick={() => dispatch(keyRotation())}>
+            <button class={btnClass} onClick={async () => {
+                setClaiming(true)
+                // const result = await dispatch(keyRotation())
+                // if (result) {
+
+                // } else {
+
+                // }
+                setTimeout(() => {
+                    setSuccess(1)
+                    setClaiming(false)
+                }, 2000)
+            }}>
                 I Wrote It Down!
             </button>
 

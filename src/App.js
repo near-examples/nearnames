@@ -5,8 +5,6 @@ import { Container } from './components/Container'
 import { Receiver } from './components/Receiver'
 import { Giver } from './components/Giver'
 
-import './App.css';
-
 // helpers
 export const btnClass = 'btn btn-sm btn-outline-primary mb-3 '
 export const flexClass = 'd-flex justify-content-evenly align-items-center '
@@ -20,7 +18,7 @@ const App = () => {
     };
     useEffect(onMount, []);
 
-    console.log('state', state);
+    // console.log('state', state);
 
     const {
         accountData, funding, wallet
@@ -33,14 +31,10 @@ const App = () => {
     }
 
     if (funding) {
-        children = <>
-            <div class={flexClass}>
-                <h2>DO NOT CLOSE / REFRESH THIS PAGE</h2>
-            </div>
-            <div class={flexClass}>
-                <h2>Creating Account...</h2>
-            </div>
-        </>
+        children = <div class="container container-custom">
+            <h2>DO NOT CLOSE OR REFRESH THIS PAGE</h2>
+            <h2>Creating Account...</h2>
+        </div>
     }
 
     if (wallet) {

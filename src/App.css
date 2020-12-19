@@ -18,6 +18,15 @@ body {
     max-width: 640px !important;
     width: 100%;
 }
+.container-alert {
+    position: fixed;
+    top: 32px; left: 0;
+    z-index: 2000;
+    width: 100%;
+}
+.alert {
+    box-shadow: 0 0 16px white, 0 0 32px white;
+}
 #accountName {
     text-transform: lowercase;
 }
@@ -35,7 +44,7 @@ button:active, button:focus, button:hover {
 
 .position-yt {
     position: relative;
-    z-index: 9999;
+    z-index: 1000;
 }
 .wrap-yt {
     position: absolute;
@@ -62,6 +71,7 @@ button:active, button:focus, button:hover {
     width: 100%;
     max-width: 400px;
     margin: auto;
+    margin-top: 16px;
 }
 .mini-stocking {
     width: 64px;
@@ -76,7 +86,7 @@ button:active, button:focus, button:hover {
 .stocking-cta {
     font-size: 1.5em;
     position: absolute;
-    top: -20px;
+    top: -30px;
     margin: auto;
     display: block;
     width: 100%;
@@ -86,4 +96,10 @@ button:active, button:focus, button:hover {
 .instructions {
     display: none;
     opacity: 0;
+}
+
+.sub-note {
+    margin-top: -16px;
+    font-size: 0.75rem;
+    color: #888;
 }

@@ -10,13 +10,16 @@ export const Container = ({ children, state }) => {
                 {children}
             </div>
         </div>
-        { state.app.alert && <div class={flexClass + ' mt-0'}>
-            <div class="container container-custom mt-0">
-                <div class="alert alert-success mt-0" role="alert">
-                    {state.app.alert}
+        { state.app.alert &&
+            <div class="container-alert">
+                <div class={flexClass + ' mt-0'}>
+                    <div class="container container-custom mt-0">
+                        <div class="alert alert-primary mt-0" role="alert">
+                            {state.app.alert}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
         }
     </>
 }

@@ -15,19 +15,25 @@ const initialState = {
 
 export const { appStore, AppProvider } = State(initialState, 'app');
 
+let alertAnimation
 export const onAlert = (message) => async ({update}) => {
     await update('app.alert', message)
-    anime({
+    if (alertAnimation) {
+        alertAnimation.pause()
+    }
+    alertAnimation = anime({
         targets: '.alert',
         easing: 'easeOutElastic',
         keyframes: [
-            {translateX: -window.innerWidth, duration: 0},
-            {translateX: 0, duration: 500},
-            {translateX: 0, duration: 2000},
-            {translateX: window.innerWidth, duration: 500},
+            {scaleX: 0, scaleY: 0, duration: 0},
+            {scaleX: 1, scaleY: 1, duration: 500},
+            {duration: 2000},
+            {scaleX: 0, scaleY: 0, duration: 500, easing: 'easeInCubic'},
         ],
+        complete: function () {
+            update('app.alert', null)
+        }
     });
-    setTimeout(() => update('app.alert', null), 3000)
 }
 
 export const onAppMount = () => async ({ update, getState, dispatch }) => {
@@ -36,10 +42,12 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     const url = new URL(window.location.href)
     const key = url.searchParams.get('key')
     const from = url.searchParams.get('from')
+    const message = url.searchParams.get('message')
+    const link = url.searchParams.get('link')
     const accountId = url.searchParams.get('accountId')
     if (key && from && accountId) {
         const { seedPhrase, publicKey } = generateSeedPhrase()
-        update('accountData', { key, from, accountId, seedPhrase, publicKey })
+        update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey })
     } else {
         dispatch(initNear());
     }
