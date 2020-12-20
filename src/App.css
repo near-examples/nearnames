@@ -39,7 +39,14 @@ button {
     background: white !important;
 }
 button:active, button:focus, button:hover {
+    color: white !important;
     background: #0d6efd !important;
+}
+button:active > img, button:focus > img, button:hover > img {
+    filter: brightness(1000);
+}
+a {
+    text-decoration: none !important;
 }
 
 .position-yt {
@@ -72,6 +79,7 @@ button:active, button:focus, button:hover {
     max-width: 400px;
     margin: auto;
     margin-top: 16px;
+    cursor: pointer;
 }
 .mini-stocking {
     width: 64px;
@@ -102,4 +110,14 @@ button:active, button:focus, button:hover {
     margin-top: -16px;
     font-size: 0.75rem;
     color: #888;
+}
+
+.tweet-button {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+}
+.tweet-icon {
+    width: 32px;
 }

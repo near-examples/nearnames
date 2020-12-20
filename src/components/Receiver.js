@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { share } from '../utils/mobile';
 import anime from 'animejs/lib/anime.es.js';
 import { onAlert } from '../state/app';
-import { getVideoId } from '../utils/youtube'
+import { keyRotation, walletUrl } from '../state/near';
 import { btnClass, qs } from '../App'
 
 import stocking from '../img/stocking.svg'
+import tweet from '../img/twitter.webp'
 
 export const Receiver = ({ state, dispatch }) => {
 
-    const { accountId, from, seedPhrase, message, link } = state.accountData
+    const { accountId, from, seedPhrase, message, link, keyExists } = state.accountData
 
     const [videoReady, setVideoReady] = useState(false)
     const [claiming, setClaiming] = useState(false)
@@ -24,7 +25,7 @@ export const Receiver = ({ state, dispatch }) => {
 
         window.onYouTubeIframeAPIReady = () => {
             window.player = new YT.Player('player-yt', {
-                videoId: link ? getVideoId(link) : 'dQw4w9WgXcQ',
+                videoId: link && link.length > 0 ? link : 'dQw4w9WgXcQ',
                 events: {
                     'onReady': () => setVideoReady(true),
                 }
@@ -40,7 +41,7 @@ export const Receiver = ({ state, dispatch }) => {
         </div>
     }
 
-    if (success === 1) {
+    if (!keyExists || success === 1) {
         return <div class="container container-custom">
             <h2>Congratulations!</h2>
             <ul>
@@ -48,10 +49,17 @@ export const Receiver = ({ state, dispatch }) => {
                 <li>Do not share it with anyone!</li>
                 <li>Your account is forever tied to this phrase. You can log into or recover your account with your seed phrase at wallet.near.org from now on!</li>
             </ul>
-            <a href="https://wallet.near.org/recover-seed-phrase" target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
+            <a href={walletUrl + '/recover-seed-phrase'} target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
 
-            <p><b>Happy Holidays from your friends at NEAR!</b></p>
-
+            <div class="container text-center mt-5">
+                <p><b>Happy Holidays from your friends at NEAR!</b></p>
+                
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me NEAR tokens and the custom account name: ${accountId} https://near-examples.github.io/account-gifter/`)}`} target="_blank">
+                    <button class={btnClass + "tweet-button"}>
+                        <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet
+                    </button>
+                </a>
+            </div>
             
             <div class="container text-center mt-5">
                 <p>Questions? Comments? Cookies?<br />Hit us up <a href="https://twitter.com/NEARProtocol?s=20" target="_blank">@NEARProtocol on Twitter</a> 🌈</p>
@@ -127,7 +135,7 @@ export const Receiver = ({ state, dispatch }) => {
             <ol>
                 <li>Write these 12 words down in this exact order.</li>
                 <li>Do not share them with anyone! This phrase is the key to your NEAR tokens, so keep it somewhere safe.</li>
-                <li>Your account is forever tied to this recovery phrase. You can log into or recover your account with your seed phrase at <a href="https://wallet.near.org" target="_blank">wallet.near.org</a> from now on!</li>
+                <li>Your account is forever tied to this recovery phrase. You can log into or recover your account with your seed phrase at <a href={walletUrl} target="_blank">wallet.near.org</a> from now on!</li>
             </ol>
 
             <button class={btnClass} onClick={() => {
@@ -144,16 +152,19 @@ export const Receiver = ({ state, dispatch }) => {
 
             <button class={btnClass} onClick={async () => {
                 setClaiming(true)
-                // const result = await dispatch(keyRotation())
-                // if (result) {
-
-                // } else {
-
-                // }
-                setTimeout(() => {
+                try {
+                    await dispatch(keyRotation())
                     setSuccess(1)
-                    setClaiming(false)
-                }, 2000)
+                } catch (e) {
+                    if (e.message.indexOf('Can not sign transactions') > -1) {
+                        alert('It looks like the account has already been claimed!')
+                        setSuccess(1)
+                    } else {
+                        alert('There was an error claiming your account. Please try again.')
+                        console.error(e)
+                    }
+                }
+                setClaiming(false)
             }}>
                 I Wrote It Down!
             </button>

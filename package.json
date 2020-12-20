@@ -27,7 +27,7 @@
     "scripts": {
         "deploy": "yarn build && gh-pages -d dist",
         "prebuild": "yarn clean",
-        "build": "parcel build src/index.html --no-source-maps --public-url ./",
+        "build": "parcel build src/index.html --no-source-maps --public-url https://near-examples.github.io/account-gifter/",
         "clean": "rimraf ./dist && rimraf .parcel-cache",
         "fix": "eslint src/ --fix",
         "start": "yarn prebuild && parcel src/index.html --open"

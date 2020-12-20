@@ -1,7 +1,8 @@
 import anime from 'animejs/lib/anime.es.js';
 import { generateSeedPhrase } from 'near-seed-phrase'
 import { State } from '../utils/state';
-import { initNear } from './near';
+import { initNear, hasKey } from './near';
+
 
 const initialState = {
 	app: {
@@ -42,12 +43,13 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     const url = new URL(window.location.href)
     const key = url.searchParams.get('key')
     const from = url.searchParams.get('from')
-    const message = url.searchParams.get('message')
-    const link = url.searchParams.get('link')
+    const message = decodeURIComponent(url.searchParams.get('message') || '')
+    const link = url.searchParams.get('link') || ''
     const accountId = url.searchParams.get('accountId')
-    if (key && from && accountId) {
+    if (key && accountId) {
         const { seedPhrase, publicKey } = generateSeedPhrase()
-        update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey })
+        const keyExists = await hasKey(key, accountId)
+        update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey, keyExists })
     } else {
         dispatch(initNear());
     }

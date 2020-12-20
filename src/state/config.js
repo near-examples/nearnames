@@ -11,12 +11,14 @@ let config = {
     networkId: 'default',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
+    nameSuffix: '.testnet',
 }
 
 if (ENV === 'prod') {
     config.networkId = 'mainnet'
     config.nodeUrl = 'https://rpc.testnet.near.org'
     config.walletUrl = 'https://wallet.near.org'
+    config.nameSuffix = '.near'
 }
 
 export { config }

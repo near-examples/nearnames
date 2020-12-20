@@ -3,9 +3,9 @@ import { get, set, del } from '../utils/storage'
 
 import { config } from './config'
 
-const {
+export const {
     FUNDING_DATA, ACCOUNT_LINKS, GAS,
-    networkId, nodeUrl, walletUrl
+    networkId, nodeUrl, walletUrl, nameSuffix,
 } = config
 
 const {
@@ -39,19 +39,11 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     // check links, see if they're still valid
     let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     for (let i = 0; i < links.length; i++) {
-        const { key, accountId, claimed } = links[i]
-        const account = new nearAPI.Account(near.connection, accountId);
-        try {
-            const accessKeys = await account.getAccessKeys()
-            if (accessKeys.length > 0) {
-                const keyPair = KeyPair.fromString(key)
-                if (!accessKeys.find(({ public_key }) => public_key === keyPair.publicKey.toString())) {
-                    links[i].claimed = true
-                    set(ACCOUNT_LINKS, links)
-                }
-            }
-        } catch (e) {
-            console.warn(e)
+        const { key, accountId } = links[i]
+        const keyExists = await hasKey(key, accountId, near)
+        if (!keyExists) {
+            links[i].claimed = true
+            set(ACCOUNT_LINKS, links)
         }
     }
     const claimed = links.filter(({claimed}) => !!claimed)
@@ -71,6 +63,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         changeMethods: ['send', 'create_account_and_claim'],
     })
     wallet.isAccountTaken = async (accountId) => {
+        accountId = accountId + nameSuffix
         const account = new nearAPI.Account(near.connection, accountId);
         try {
             await account.state()
@@ -80,6 +73,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         }
     }
     wallet.fundAccount = async (amount, accountId, recipientName) => {
+        accountId = accountId + nameSuffix
         if (parseInt(amount, 10) < 5 || accountId.length < 2 || accountId.length > 48) {
             return update('app.wasValidated', true)
         }
@@ -144,4 +138,25 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
     const result = await account.signAndSendTransaction(accountId, actions)
     
     return result
+}
+
+export const hasKey = async (key, accountId, near) => {
+    const keyPair = KeyPair.fromString(key)
+    const pubKeyStr = keyPair.publicKey.toString()
+    if (!near) {
+        const signer = await InMemorySigner.fromKeyPair(networkId, accountId, keyPair)
+        near = await nearAPI.connect({
+            networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
+        });
+    }
+    const account = new nearAPI.Account(near.connection, accountId);
+    try {
+        const accessKeys = await account.getAccessKeys()
+        if (accessKeys.length > 0 && accessKeys.find(({ public_key }) => public_key === pubKeyStr)) {
+            return true
+        }
+    } catch (e) {
+        console.warn(e)
+    }
+    return false
 }
