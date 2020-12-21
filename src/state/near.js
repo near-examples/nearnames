@@ -4,7 +4,7 @@ import { get, set, del } from '../utils/storage'
 import { config } from './config'
 
 export const {
-    FUNDING_DATA, ACCOUNT_LINKS, GAS,
+    FUNDING_DATA, ACCOUNT_LINKS, GAS, SEED_PHRASE_LOCAL_COPY,
     networkId, nodeUrl, walletUrl, nameSuffix,
     contractName,
 } = config
@@ -134,7 +134,7 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funde
 
 export const keyRotation = () => async ({ update, getState, dispatch }) => {
     const state = getState()
-    const { key, accountId, publicKey } = state.accountData
+    const { key, accountId, publicKey, seedPhrase } = state.accountData
 
     const keyPair = KeyPair.fromString(key)
     const signer = await InMemorySigner.fromKeyPair(networkId, accountId, keyPair)
@@ -147,6 +147,8 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
         deleteKey(PublicKey.from(accessKeys[0].public_key)),
         addKey(PublicKey.from(publicKey), fullAccessKey())
     ]
+
+    set(SEED_PHRASE_LOCAL_COPY, seedPhrase)
 
     const result = await account.signAndSendTransaction(accountId, actions)
 

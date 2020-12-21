@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { share } from '../utils/mobile';
 import anime from 'animejs/lib/anime.es.js';
 import { onAlert } from '../state/app';
-import { keyRotation, walletUrl } from '../state/near';
+import { keyRotation, walletUrl, SEED_PHRASE_LOCAL_COPY } from '../state/near';
 import { btnClass, qs } from '../App'
+import { get } from '../utils/storage'
 
 import stocking from '../img/stocking.svg'
 import tweet from '../img/twitter.webp'
@@ -26,7 +27,7 @@ export const Receiver = ({ state, dispatch }) => {
 
         window.onYouTubeIframeAPIReady = () => {
             window.player = new YT.Player('player-yt', {
-                videoId: link && link.length > 0 ? link : 'dQw4w9WgXcQ',
+                videoId: link && link.length > 0 ? link : 's1LUXQWzCno',
                 events: {
                     'onReady': () => setVideoReady(true),
                 }
@@ -56,7 +57,7 @@ export const Receiver = ({ state, dispatch }) => {
 
                 <p>Sharing is caring! Spread the love ✌️</p>
 
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} https://nearnames.com/`)}`} target="_blank">
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #nearcheer https://nearnames.com/ `)}`} target="_blank">
                     <button class={btnClass + "tweet-button"}>
                         <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet About Your Gift
                     </button>
@@ -70,6 +71,18 @@ export const Receiver = ({ state, dispatch }) => {
             </div>
 
             <div class="container text-center mt-5">
+
+                <button class={btnClass} onClick={() => {
+                        const localSeedPhrase = get(SEED_PHRASE_LOCAL_COPY, '')
+                        if (!localSeedPhrase.length) {
+                            window.alert('There is no seed phrase on this device for this gift link. Did you open the link in another browser? Please open that link again and use this button!')
+                        }
+                        share(localSeedPhrase)
+                        dispatch(onAlert('Copied!'))
+                    }}>
+                        COPY SEED PHRASE
+                </button>
+                <p class="sub-note">This is a local copy in your browser, just in case you didn't write it down. Please write down your seed phrase and keep it somewhere safe!</p>
 
                 <a href={walletUrl + '/recover-seed-phrase'} target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
 
@@ -146,42 +159,50 @@ export const Receiver = ({ state, dispatch }) => {
                 <li>Your account is forever tied to this recovery phrase. You can log into or recover your account with your seed phrase at <a href={walletUrl} target="_blank">wallet.near.org</a> from now on!</li>
             </ol>
 
-            <button class={btnClass} onClick={() => {
-                share(seedPhrase)
-                dispatch(onAlert('Copied!'))
-            }}>
-                COPY SEED PHRASE
-            </button>
-
-            {seedHidden && <button class={btnClass + 'ml-3'} onClick={() => {
+            {seedHidden && <button class={btnClass} onClick={() => {
                 setSeedHidden(!seedHidden)
             }}>
                 REVEAL MY SECRET SEED PHRASE
             </button>}
 
             <div class="form-floating mb-3">
-                <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} defaultValue={`************`} />
+                <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} />
                 <label for="seedPhrase">Seed Phrase</label>
             </div>
 
-            <button class={btnClass} onClick={async () => {
-                setClaiming(true)
-                try {
-                    await dispatch(keyRotation())
-                    setSuccess(1)
-                } catch (e) {
-                    if (e.message.indexOf('Can not sign transactions') > -1) {
-                        alert('It looks like the account has already been claimed!')
-                        setSuccess(1)
-                    } else {
-                        alert('There was an error claiming your account. Please try again.')
-                        console.error(e)
-                    }
-                }
-                setClaiming(false)
-            }}>
-                I Wrote It Down!
+            {!seedHidden && <>
+
+
+                <button class={btnClass} onClick={() => {
+                    share(seedPhrase)
+                    dispatch(onAlert('Copied!'))
+                }}>
+                    COPY SEED PHRASE
             </button>
+
+                <br />
+
+                <button class={btnClass} onClick={async () => {
+                    setClaiming(true)
+                    try {
+                        await dispatch(keyRotation())
+                        setSuccess(1)
+                    } catch (e) {
+                        if (e.message.indexOf('Can not sign transactions') > -1) {
+                            alert('It looks like the account has already been claimed!')
+                            setSuccess(1)
+                        } else {
+                            alert('There was an error claiming your account. Please try again.')
+                            console.error(e)
+                        }
+                    }
+                    setClaiming(false)
+                }}>
+                    I Wrote It Down!
+            </button>
+
+            </>}
+
 
         </div>
     </>

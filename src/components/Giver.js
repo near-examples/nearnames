@@ -54,7 +54,7 @@ export const Giver = ({ state, update, dispatch }) => {
             wallet.signedIn ?
                 <>
 
-                    <h4>My Wallet</h4>
+                    <h2>My Wallet</h2>
                     <div class={flexClass}>
                         <p>{wallet.getAccountId()} - {wallet.balance} N</p>
                         <button class={btnClass + 'ms-3'} onClick={() => {
@@ -72,7 +72,72 @@ export const Giver = ({ state, update, dispatch }) => {
         {
             wallet.signedIn &&
             <>
-                <h2>Create Gift Account</h2>
+
+                {
+                    links && links.length > 0 && <>
+                        <h2>Gift Links</h2>
+                        <center>
+                            {
+                                links.map(({ key, accountId, recipientName = '' }) => <div key={key}>
+                                    <div>
+                                        <strong>{accountId}</strong> {recipientName.length > 0 && <span>for {recipientName}</span>}
+                                    </div>
+                                    <div>
+                                        <button class={btnClass + 'mt-2'} onClick={() => {
+                                            share(getLink(accountId, key, wallet, message, link))
+                                            dispatch(onAlert('Copied!'))
+                                        }}>
+                                            Click to Share
+                            </button>
+                                    </div>
+                                </div>)
+                            }
+                        </center>
+
+                        <h4 class="mb-3">Include Gift Message (optional)</h4>
+                        <p class="sub-note">Personalize each link <i>before</i> you "Click to Share" above.</p>
+                        <form class={'was-validated'}>
+                            <div class="form-floating mb-3">
+                                <textarea
+                                    type="text" class="form-control" placeholder=" " maxlength="140"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                />
+                                <label for="fundingAmount">Custom Message</label>
+                            </div>
+                            <div class="form-floating mb-3" name="yt-link">
+                                <input type="text" class="form-control" placeholder=" "
+                                    value={link}
+                                    pattern="(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)"
+                                    onChange={(e) => setLink(e.target.value)}
+                                />
+                                <label for="fundingAmount">YouTube Link</label>
+                                <div class="invalid-feedback">
+                                    Not a valid YT link
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <select class="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
+                            <option value="">Select a Video</option>
+                            <option value="https://www.youtube.com/watch?v=s1LUXQWzCno">Charlie Brown Christmas Dance</option>
+                            <option value="https://www.youtube.com/watch?v=ppWrbYC3WwQ">How the Grinch Stole Christmas</option>
+                            <option value="https://www.youtube.com/watch?v=uwCcVRH8idA">Otis Redding - White Christmas</option>
+                            <option value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Never Gonna Give You Up</option>
+                            <option value="https://www.youtube.com/watch?v=B7u6bMBlCXw">Love Actually - To me you are perfect</option>
+                            <option value="https://www.youtube.com/watch?v=76WFkKp8Tjs">Bruce Springsteen - Santa Claus Is Comin' To Town</option>
+                            <option value="https://www.youtube.com/watch?v=sDfcQ_LBHqY">Mean Girls  - Jingle Bell Rock</option>
+                            <option value="https://www.youtube.com/watch?v=yXQViqx6GMY">Mariah Carey - All I Want For Christmas Is You</option>
+                        </select>
+
+
+                        
+                    </>
+                }
+
+
+                <h2 class="mt-5">Create {links && links.length > 0 ? 'Another' : ''} Gift Account</h2>
                 <form
                     class={'needs-validation ' + (app.wasValidated ? 'was-validated' : '')}
                     autocomplete="off"
@@ -132,109 +197,25 @@ export const Giver = ({ state, update, dispatch }) => {
                     CREATE GIFT ACCOUNT
                 </button>
 
-                {
-                    links && links.length > 0 && <>
-                        <h2>Gift Links</h2>
-                        <center>
-                            {
-                                links.map(({ key, accountId, recipientName = '' }) => <div key={key}>
-                                    <div>
-                                        <strong>{accountId}</strong> {recipientName.length > 0 && <span>for {recipientName}</span>}
-                                    </div>
-                                    <div>
-                                        <button class={btnClass + 'mt-2'} onClick={() => {
-                                            share(getLink(accountId, key, wallet, message, link))
-                                            dispatch(onAlert('Copied!'))
-                                        }}>
-                                            Click to Share
-                            </button>
-                                    </div>
-                                </div>)
-                            }
-                        </center>
 
-                        <h4 class="mb-3">Include Gift Message (optional)</h4>
-                        <p class="sub-note">Personalize each link <i>before</i> you "Click to Share" above.</p>
-                        <form class={'was-validated'}>
-                            <div class="form-floating mb-3">
-                                <textarea
-                                    type="text" class="form-control" placeholder=" " maxlength="140"
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                />
-                                <label for="fundingAmount">Custom Message</label>
-                            </div>
-                            <div class="form-floating mb-3" name="yt-link">
-                                <input type="text" class="form-control" placeholder=" "
-                                    value={link}
-                                    pattern="(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)"
-                                    onChange={(e) => setLink(e.target.value)}
-                                />
-                                <label for="fundingAmount">YouTube Link</label>
-                                <div class="invalid-feedback">
-                                    Not a valid YT link
-                        </div>
-                            </div>
-                            <p>Choose Video</p>
-                            <ul>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=ppWrbYC3WwQ')}>
-                                        How the Grinch Stole Christmas
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=s1LUXQWzCno')}>
-                                        Charlie Brown Christmas Dance
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=uwCcVRH8idA')}>
-                                        Otis Redding - White Christmas
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ')}>
-                                        Never Gonna Give You Up
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=B7u6bMBlCXw')}>
-                                        Love Actually - To me you are perfect
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=76WFkKp8Tjs')}>
-                                        Bruce Springsteen - Santa Claus Is Comin' To Town
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=sDfcQ_LBHqY')}>
-                                        Mean Girls  - Jingle Bell Rock
-                            </a>
-                                </li>
-                                <li>
-                                    <a href="#yt-link" onClick={() => setLink('https://www.youtube.com/watch?v=yXQViqx6GMY')}>
-                                        Mariah Carey - All I Want For Christmas Is You
-                            </a>
-                                </li>
-                            </ul>
-                        </form>
+                { links && links.length > 0 && <>
+                
+                    <h2 class="mt-5">Backup</h2>
 
-                        <h2 class="mt-5">Backup</h2>
+                    <button class={btnClass + 'mt-3'} onClick={() => {
+                        let backupTxt = ''
+                        links.forEach(({ key, accountId, recipientName = '' }) => {
+                            backupTxt += `accountId: ${getLink(accountId, key, wallet, message, link)} for ${recipientName}\n\n`
+                        })
+                        share(backupTxt)
+                        dispatch(onAlert('Copied!'))
+                    }}>
+                        Copy All Gift Links
+                    </button>
+                    <p class="sub-note">In case your browser's storage is cleared. Keep them somewhere safe!</p>
+                
+                </>}
 
-                        <button class={btnClass + 'mt-3'} onClick={() => {
-                            let backupTxt = ''
-                            links.forEach(({ key, accountId, recipientName = '' }) => {
-                                backupTxt += `accountId: ${getLink(accountId, key, wallet, message, link)} for ${recipientName}\n\n`
-                            })
-                            share(backupTxt)
-                            dispatch(onAlert('Copied!'))
-                        }}>
-                            Copy All Gift Links
-                        </button>
-                        <p class="sub-note">In case your browser's storage is cleared. Keep them somewhere safe!</p>
-                    </>
-                }
 
                 {claimed.length > 0 && <h2 class="mt-5">Past Gifted Accounts</h2>}
                 {
