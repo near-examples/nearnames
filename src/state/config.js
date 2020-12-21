@@ -1,7 +1,4 @@
-
-
 import { BN } from 'bn.js'
-const ENV = process.env.REACT_APP_ENV
 
 // testnet / default
 let config = {
@@ -12,13 +9,18 @@ let config = {
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
     nameSuffix: '.testnet',
+    contractName: 'testnet',
 }
 
-if (ENV === 'prod') {
-    config.networkId = 'mainnet'
-    config.nodeUrl = 'https://rpc.testnet.near.org'
-    config.walletUrl = 'https://wallet.near.org'
-    config.nameSuffix = '.near'
+if (process.env.REACT_APP_ENV === 'prod') {
+    config = {
+        ...config,
+        networkId: 'mainnet',
+        nodeUrl: 'https://rpc.mainnet.near.org',
+        walletUrl: 'https://wallet.near.org',
+        nameSuffix: '.near',
+        contractName: 'near',
+    }
 }
 
 export { config }

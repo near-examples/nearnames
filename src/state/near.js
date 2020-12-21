@@ -6,6 +6,7 @@ import { config } from './config'
 export const {
     FUNDING_DATA, ACCOUNT_LINKS, GAS,
     networkId, nodeUrl, walletUrl, nameSuffix,
+    contractName,
 } = config
 
 const {
@@ -52,14 +53,14 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near);
     wallet.signIn = () => {
-        wallet.requestSignIn('testnet', 'Blah Blah')
+        wallet.requestSignIn(contractName, 'Blah Blah')
     }
     wallet.signedIn = wallet.isSignedIn()
     if (wallet.signedIn) {
         wallet.balance = formatNearAmount((await wallet.account().getAccountBalance()).available, 2)
     }
 
-    const contract = await new nearAPI.Contract(wallet.account(), 'testnet', {
+    const contract = await new nearAPI.Contract(wallet.account(), contractName, {
         changeMethods: ['send', 'create_account_and_claim'],
     })
     wallet.isAccountTaken = async (accountId) => {
@@ -78,21 +79,21 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             return update('app.wasValidated', true)
         }
         const keyPair = KeyPair.fromRandom('ed25519')
-        set(FUNDING_DATA, { key: keyPair.secretKey, accountId, recipientName })
+        set(FUNDING_DATA, { key: keyPair.secretKey, accountId, recipientName, amount, funder_account_id: wallet.getAccountId() })
         await contract.send({ public_key: keyPair.publicKey.toString() }, GAS, parseNearAmount(amount))
     }
 
     update('', { near, wallet, links, claimed })
 };
 
-export const hasFundingKeyFlow = ({ key, accountId, recipientName }) => async ({ update, getState, dispatch }) => {
+export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funder_account_id }) => async ({ update, getState, dispatch }) => {
     const keyPair = KeyPair.fromString(key)
-    const signer = await InMemorySigner.fromKeyPair(networkId, 'testnet', keyPair)
+    const signer = await InMemorySigner.fromKeyPair(networkId, contractName, keyPair)
     const near = await nearAPI.connect({
         networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
     });
-    const account = new nearAPI.Account(near.connection, 'testnet');
-    const contract = await new nearAPI.Contract(account, 'testnet', {
+    const account = new nearAPI.Account(near.connection, contractName);
+    const contract = await new nearAPI.Contract(account, contractName, {
         changeMethods: ['send', 'create_account_and_claim'],
         sender: account
     })
@@ -107,6 +108,18 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName }) => async ({
 
         const links = get(ACCOUNT_LINKS, [])
         links.push({ key: newKeyPair.secretKey, accountId, recipientName })
+
+        fetch('https://hooks.zapier.com/hooks/catch/6370559/oc18t1b/', {
+            method: 'POST',
+            body: JSON.stringify({
+                funder_account_id,
+                alias: recipientName,
+                account_id: accountId,
+                amount,
+                time_created: Date.now()
+            })
+        })
+
         set(ACCOUNT_LINKS, links)
     } catch (e) {
         if (e.message.indexOf('no matching key pair found') === -1) {
@@ -136,6 +149,14 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
     ]
 
     const result = await account.signAndSendTransaction(accountId, actions)
+
+    fetch('https://hooks.zapier.com/hooks/catch/6370559/ocibjmr/', {
+        method: 'POST',
+        body: JSON.stringify({
+            account_id: accountId,
+            time_claimed: Date.now()
+        })
+    })
     
     return result
 }

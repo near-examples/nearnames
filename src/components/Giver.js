@@ -126,7 +126,7 @@ export const Giver = ({ state, update, dispatch }) => {
                 </form>
 
                 <button
-                    // disabled={disabled}
+                    disabled={disabled}
                     class={btnClass + "pulse"}
                     onClick={() => wallet.fundAccount(qs('#fundingAmount').value, id, qs('#recipientName').value)}>
                     CREATE GIFT ACCOUNT
