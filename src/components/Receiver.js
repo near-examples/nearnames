@@ -54,7 +54,7 @@ export const Receiver = ({ state, dispatch }) => {
             <div class="container text-center mt-5">
                 <p><b>Happy Holidays from your friends at NEAR!</b></p>
                 
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me NEAR tokens and the custom account name: ${accountId} https://near-examples.github.io/account-gifter/`)}`} target="_blank">
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} https://near-examples.github.io/account-gifter/`)}`} target="_blank">
                     <button class={btnClass + "tweet-button"}>
                         <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet
                     </button>
