@@ -181,8 +181,8 @@ export const Receiver = ({ state, dispatch }) => {
             </button>
 
                 <br />
-
-                <button class={btnClass} onClick={async () => {
+                <center>
+                <button class={btnClass + 'pulse'} onClick={async () => {
                     setClaiming(true)
                     try {
                         await dispatch(keyRotation())
@@ -198,8 +198,9 @@ export const Receiver = ({ state, dispatch }) => {
                     }
                     setClaiming(false)
                 }}>
-                    I Wrote It Down!
+                    I Wrote It Down! CLAIM MY ACCOUNT NOW!
             </button>
+            </center>
 
             </>}
 

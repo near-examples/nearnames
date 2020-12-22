@@ -125,3 +125,22 @@ a {
 .ml-3 {
     margin-left: 16px;
 }
+
+.pulse {
+    transform: scale(1);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
