@@ -4,7 +4,7 @@ import { get, set, del } from '../utils/storage'
 import { config } from './config'
 
 export const {
-    FUNDING_DATA, ACCOUNT_LINKS, GAS, SEED_PHRASE_LOCAL_COPY,
+    FUNDING_DATA, FUNDING_DATA_BACKUP, ACCOUNT_LINKS, GAS, SEED_PHRASE_LOCAL_COPY,
     networkId, nodeUrl, walletUrl, nameSuffix,
     contractName,
 } = config
@@ -23,14 +23,16 @@ const {
     }
 } = nearAPI
 
-export const initNear = () => async ({ update, getState, dispatch }) => {
+export const initNear = (skipFunding = false) => async ({ update, getState, dispatch }) => {
 
     // check returned from funding key -> claim the named account
     update('funding', false)
-    const fundingData = get(FUNDING_DATA)
-    if (fundingData && fundingData.key) {
-        update('funding', true)
-        return dispatch(hasFundingKeyFlow(fundingData))
+    if (!skipFunding) {
+        const fundingData = get(FUNDING_DATA)
+        if (fundingData && fundingData.key) {
+            update('funding', true)
+            return dispatch(hasFundingKeyFlow(fundingData))
+        }
     }
 
     const near = await nearAPI.connect({
@@ -88,6 +90,11 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
 export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funder_account_id }) => async ({ update, getState, dispatch }) => {
     const keyPair = KeyPair.fromString(key)
+    const keyExists = await hasKey(key, contractName)
+    if (!keyExists) {
+        dispatch(initNear(true))
+    }
+
     const signer = await InMemorySigner.fromKeyPair(networkId, contractName, keyPair)
     const near = await nearAPI.connect({
         networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
@@ -101,35 +108,37 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funde
     const newKeyPair = KeyPair.fromRandom('ed25519')
     let result
     try {
+        const links = get(ACCOUNT_LINKS, [])
+        links.push({ key: newKeyPair.secretKey, accountId, recipientName })
+        set(ACCOUNT_LINKS, links)
+        
         result = await contract.create_account_and_claim({
             new_account_id: accountId,
             new_public_key: newKeyPair.publicKey.toString()
         }, GAS, '0')
 
-        const links = get(ACCOUNT_LINKS, [])
-        links.push({ key: newKeyPair.secretKey, accountId, recipientName })
-
-        fetch('https://hooks.zapier.com/hooks/catch/6370559/oc18t1b/', {
-            method: 'POST',
-            body: JSON.stringify({
-                funder_account_id,
-                alias: recipientName,
-                account_id: accountId,
-                amount,
-                time_created: Date.now()
+        if (result === true) {
+            del(FUNDING_DATA)
+            fetch('https://hooks.zapier.com/hooks/catch/6370559/oc18t1b/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    funder_account_id,
+                    alias: recipientName,
+                    account_id: accountId,
+                    amount,
+                    time_created: Date.now()
+                })
             })
-        })
-
-        set(ACCOUNT_LINKS, links)
+            dispatch(initNear())
+        } else {
+            dispatch(initNear(true))
+        }
     } catch (e) {
         if (e.message.indexOf('no matching key pair found') === -1) {
             throw e
         }
+        dispatch(initNear(true))
     }
-    console.log('result', result)
-    del(FUNDING_DATA)
-
-    dispatch(initNear())
 }
 
 export const keyRotation = () => async ({ update, getState, dispatch }) => {
