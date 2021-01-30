@@ -13,7 +13,6 @@ export const Receiver = ({ state, dispatch }) => {
 
     const { accountId, from, seedPhrase, message, link, keyExists } = state.accountData
 
-    const [videoReady, setVideoReady] = useState(false)
     const [claiming, setClaiming] = useState(false)
     const [success, setSuccess] = useState(0)
     const [seedHidden, setSeedHidden] = useState(true)
@@ -52,21 +51,9 @@ export const Receiver = ({ state, dispatch }) => {
                 <li>Your account is forever tied to this phrase. You can log into or recover your account with your seed phrase at wallet.near.org from now on!</li>
             </ul>
 
-            <div class="container text-center mt-3">
-                <p><b>Happy Holidays from your friends at NEAR!</b></p>
-
-                <p>Sharing is caring! Spread the love ✌️</p>
-
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #nearcheer https://nearnames.com/ `)}`} target="_blank">
-                    <button class={btnClass + "tweet-button"}>
-                        <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet About Your Gift
-                    </button>
-                </a>
-            </div>
-
             <div class="container text-center mt-5">
 
-                <img class="mini-stocking" src={stocking} />
+                <a href={walletUrl + '/recover-seed-phrase'} target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
 
             </div>
 
@@ -84,11 +71,20 @@ export const Receiver = ({ state, dispatch }) => {
                 </button>
                 <p class="sub-note">This is a local copy in your browser, just in case you didn't write it down. Please write down your seed phrase and keep it somewhere safe!</p>
 
-                <a href={walletUrl + '/recover-seed-phrase'} target="_blank"><button class={btnClass}>Sign in to NEAR Wallet</button></a>
-
             </div>
 
-            <div class="container text-center mt-3">
+            <div class="container text-center mt-5">
+
+                <p>Sharing is caring! Spread the love ✌️</p>
+
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #nearcheer https://nearnames.com/ `)}`} target="_blank">
+                    <button class={btnClass + "tweet-button"}>
+                        <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet About Your Gift
+                    </button>
+                </a>
+            </div>
+
+            <div class="container text-center mt-5">
                 <p>Questions? Comments? Cookies?<br />Hit us up <a href="https://twitter.com/NEARProtocol?s=20" target="_blank">@NEARProtocol on Twitter</a> 🌈</p>
             </div>
         </div>
@@ -96,9 +92,8 @@ export const Receiver = ({ state, dispatch }) => {
 
     return <>
 
-        <div class="text-center mb-5">
-            <h3>Holiday Cheer is NEAR</h3>
-            <p>Welcome to the NEAR blockchain!</p>
+        <div class="text-center mt-3 mb-5">
+            <h3>Welcome to NEAR!</h3>
             <p><b>{from}</b> has gifted you some NEAR tokens and the account name:</p>
             <p><b>{accountId}</b></p>
             {message && message.length > 0 && <p>{message}</p>}
@@ -112,7 +107,7 @@ export const Receiver = ({ state, dispatch }) => {
             </div>
         </div>
 
-        <div class="wrap-stocking">
+        {/* <div class="wrap-stocking">
             <div class="stocking-cta">{videoReady ? '👇 Open Stocking 👇' : ''}</div>
             <img class="stocking" src={stocking} onClick={() => {
                 if (!videoReady) return
@@ -145,7 +140,7 @@ export const Receiver = ({ state, dispatch }) => {
                     }
                 });
             }} />
-        </div>
+        </div> */}
 
         <div class="instructions">
 

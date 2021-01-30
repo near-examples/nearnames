@@ -28,9 +28,7 @@ export const Giver = ({ state, update, dispatch }) => {
 
     return <>
         <div class={flexClass + 'mb-3 text-center'}>
-            <img class="mini-stocking" src={stocking} />
-            <h5><b>Holiday Cheer is<br />NEAR!</b></h5>
-            <img class="mini-stocking" src={stocking} />
+            <h5><b>Gift a name on<br />NEAR!</b></h5>
         </div>
 
         <p>In the spirit of whatever holiday you celebrate... Claim a name for friends and fam on the NEAR blockchain!</p>
@@ -105,7 +103,7 @@ export const Giver = ({ state, update, dispatch }) => {
                                 />
                                 <label for="fundingAmount">Custom Message</label>
                             </div>
-                            <div class="form-floating mb-3" name="yt-link">
+                            {/* <div class="form-floating mb-3" name="yt-link">
                                 <input type="text" class="form-control" placeholder=" "
                                     value={link}
                                     pattern="(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)"
@@ -115,11 +113,11 @@ export const Giver = ({ state, update, dispatch }) => {
                                 <div class="invalid-feedback">
                                     Not a valid YT link
                                 </div>
-                            </div>
+                            </div> */}
 
                         </form>
 
-                        <select class="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
+                        {/* <select class="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
                             <option value="">Select a Video</option>
                             <option value="https://www.youtube.com/watch?v=s1LUXQWzCno">Charlie Brown Christmas Dance</option>
                             <option value="https://www.youtube.com/watch?v=ppWrbYC3WwQ">How the Grinch Stole Christmas</option>
@@ -129,9 +127,7 @@ export const Giver = ({ state, update, dispatch }) => {
                             <option value="https://www.youtube.com/watch?v=76WFkKp8Tjs">Bruce Springsteen - Santa Claus Is Comin' To Town</option>
                             <option value="https://www.youtube.com/watch?v=sDfcQ_LBHqY">Mean Girls  - Jingle Bell Rock</option>
                             <option value="https://www.youtube.com/watch?v=yXQViqx6GMY">Mariah Carey - All I Want For Christmas Is You</option>
-                        </select>
-
-
+                        </select> */}
                         
                     </>
                 }

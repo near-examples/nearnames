@@ -101,11 +101,6 @@ a {
     text-align: center;
 }
 
-.instructions {
-    display: none;
-    opacity: 0;
-}
-
 .sub-note {
     margin-top: -16px;
     font-size: 0.75rem;
