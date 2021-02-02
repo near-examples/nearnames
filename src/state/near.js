@@ -42,7 +42,10 @@ export const initNear = (skipFunding = false) => async ({ update, getState, disp
     // check links, see if they're still valid
     let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     for (let i = 0; i < links.length; i++) {
-        const { key, accountId } = links[i]
+        const { key, accountId, keyStored = Date.now() } = links[i]
+        if (Date.now() - keyStored < 5000) {
+            continue
+        }
         const keyExists = await hasKey(key, accountId, near)
         if (!keyExists) {
             links[i].claimed = true
@@ -109,7 +112,7 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funde
     let result
     try {
         const links = get(ACCOUNT_LINKS, [])
-        links.push({ key: newKeyPair.secretKey, accountId, recipientName })
+        links.push({ key: newKeyPair.secretKey, accountId, recipientName, keyStored: Date.now() })
         set(ACCOUNT_LINKS, links)
         
         result = await contract.create_account_and_claim({
@@ -139,6 +142,22 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funde
         }
         dispatch(initNear(true))
     }
+}
+
+export const unclaimLink = (keyToFind) => async ({ update }) => {
+    let links = get(ACCOUNT_LINKS, [])
+    const link = links.find(({ key }) => key === keyToFind)
+    if (!link) {
+        alert('cannot find link')
+        return
+    }
+    link.claimed = false
+    set(ACCOUNT_LINKS, links)
+
+    const claimed = links.filter(({claimed}) => claimed === true)
+    links = links.filter(({claimed}) => !claimed)
+    
+    update('', { links, claimed })
 }
 
 export const keyRotation = () => async ({ update, getState, dispatch }) => {
@@ -175,6 +194,7 @@ export const keyRotation = () => async ({ update, getState, dispatch }) => {
 export const hasKey = async (key, accountId, near) => {
     const keyPair = KeyPair.fromString(key)
     const pubKeyStr = keyPair.publicKey.toString()
+
     if (!near) {
         const signer = await InMemorySigner.fromKeyPair(networkId, accountId, keyPair)
         near = await nearAPI.connect({

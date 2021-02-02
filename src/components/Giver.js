@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { onAlert } from '../state/app';
-import { nameSuffix } from '../state/near';
+import { nameSuffix, unclaimLink } from '../state/near';
 import { share } from '../utils/mobile';
 import { flexClass, btnClass, qs } from '../App'
 import { getVideoId } from '../utils/youtube'
@@ -21,6 +21,8 @@ export const Giver = ({ state, update, dispatch }) => {
     const [disabled, setDisabled] = useState(true)
     const [message, setMessage] = useState('')
     const [link, setLink] = useState('')
+
+    
 
     const checkDisabled = () => {
         setTimeout(() => setDisabled(!!document.querySelectorAll(':invalid').length), 250)
@@ -215,9 +217,10 @@ export const Giver = ({ state, update, dispatch }) => {
 
                 {claimed.length > 0 && <h2 class="mt-5">Past Gifted Accounts</h2>}
                 {
-                    claimed.map(({ key, accountId, recipientName = '' }) => <p key={key}>
-                        <strong>{accountId}</strong>: claimed by {recipientName}
-                    </p>)
+                    claimed.map(({ key, accountId, recipientName = '' }) => <div key={key}>
+                        <p class={'mb-0'} ><strong>{accountId}</strong>: claimed by {recipientName}</p>
+                        <button class={btnClass + 'mb-3'} onClick={() => dispatch(unclaimLink(key))}>Try Share Link Again</button>
+                    </div>)
                 }
             </>
         }
