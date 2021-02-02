@@ -42,7 +42,7 @@ export const initNear = (skipFunding = false) => async ({ update, getState, disp
     // check links, see if they're still valid
     let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     for (let i = 0; i < links.length; i++) {
-        const { key, accountId, keyStored = Date.now() } = links[i]
+        const { key, accountId, keyStored = 0 } = links[i]
         if (Date.now() - keyStored < 5000) {
             continue
         }
