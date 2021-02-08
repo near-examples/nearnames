@@ -39,23 +39,24 @@ export const initNear = (skipFunding = false) => async ({ update, getState, disp
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     });
 
-    let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
+    const localLinks = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
     if (!skipFunding) {
-        // check links, see if they're still valid
-        for (let i = 0; i < links.length; i++) {
-            const { key, accountId, keyStored = 0 } = links[i]
-            if (Date.now() - keyStored < 5000) {
+        // check localLinks, see if they're still valid
+        for (let i = 0; i < localLinks.length; i++) {
+            const { key, accountId, keyStored = 0, claimed } = localLinks[i]
+            if (!!claimed || Date.now() - keyStored < 5000) {
                 continue
             }
             const keyExists = await hasKey(key, accountId, near)
             if (!keyExists) {
-                links[i].claimed = true
-                set(ACCOUNT_LINKS, links)
+                localLinks[i].claimed = true
             }
         }
+        set(ACCOUNT_LINKS, localLinks)
     }
-    const claimed = links.filter(({claimed}) => !!claimed)
-    links = links.filter(({claimed}) => !claimed)
+
+    const claimed = localLinks.filter(({claimed}) => !!claimed)
+    const links = localLinks.filter(({claimed}) => !claimed)
 
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near);
