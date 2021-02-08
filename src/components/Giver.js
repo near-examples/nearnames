@@ -7,7 +7,7 @@ import { getVideoId } from '../utils/youtube'
 
 import stocking from '../img/stocking.svg'
 
-const forExample = `(for example: "santa.near" or "frosty.near")`
+const forExample = `(for example: "bestie.near" or "squad.near")`
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'))
 const getLink = (accountId, key, wallet, message = '', link = '') => `${baseUrl}?accountId=${accountId}&key=${key}&from=${wallet.getAccountId()}&message=${encodeURIComponent(message)}&link=${getVideoId(link)}`
 
@@ -21,8 +21,6 @@ export const Giver = ({ state, update, dispatch }) => {
     const [disabled, setDisabled] = useState(true)
     const [message, setMessage] = useState('')
     const [link, setLink] = useState('')
-
-    
 
     const checkDisabled = () => {
         setTimeout(() => setDisabled(!!document.querySelectorAll(':invalid').length), 250)

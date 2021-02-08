@@ -39,17 +39,19 @@ export const initNear = (skipFunding = false) => async ({ update, getState, disp
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     });
 
-    // check links, see if they're still valid
     let links = get(ACCOUNT_LINKS, []).sort((a) => a.claimed ? 1 : -1)
-    for (let i = 0; i < links.length; i++) {
-        const { key, accountId, keyStored = 0 } = links[i]
-        if (Date.now() - keyStored < 5000) {
-            continue
-        }
-        const keyExists = await hasKey(key, accountId, near)
-        if (!keyExists) {
-            links[i].claimed = true
-            set(ACCOUNT_LINKS, links)
+    if (!skipFunding) {
+        // check links, see if they're still valid
+        for (let i = 0; i < links.length; i++) {
+            const { key, accountId, keyStored = 0 } = links[i]
+            if (Date.now() - keyStored < 5000) {
+                continue
+            }
+            const keyExists = await hasKey(key, accountId, near)
+            if (!keyExists) {
+                links[i].claimed = true
+                set(ACCOUNT_LINKS, links)
+            }
         }
     }
     const claimed = links.filter(({claimed}) => !!claimed)
@@ -109,12 +111,24 @@ export const hasFundingKeyFlow = ({ key, accountId, recipientName, amount, funde
     })
 
     const newKeyPair = KeyPair.fromRandom('ed25519')
-    let result
     try {
         const links = get(ACCOUNT_LINKS, [])
         links.push({ key: newKeyPair.secretKey, accountId, recipientName, keyStored: Date.now() })
         set(ACCOUNT_LINKS, links)
-        
+    } catch(e) {
+        alert('Browser error saving key. Still have funds. Please refresh this page.')
+        return dispatch(initNear(true))
+    }
+
+    const links = get(ACCOUNT_LINKS, [])
+    const hasLink = links.some(({ accountId: id }) => accountId === id)
+    if (!hasLink) {
+        alert('Browser error saving key. Still have funds. Please refresh this page.')
+        return dispatch(initNear(true))
+    }
+    
+    let result
+    try {
         result = await contract.create_account_and_claim({
             new_account_id: accountId,
             new_public_key: newKeyPair.publicKey.toString()
