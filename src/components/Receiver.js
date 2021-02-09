@@ -77,7 +77,7 @@ export const Receiver = ({ state, dispatch }) => {
 
                 <p>Sharing is caring! Spread the love ✌️</p>
 
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #nearcheer https://nearnames.com/ `)}`} target="_blank">
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #NEARName https://nearnames.com/ `)}`} target="_blank">
                     <button class={btnClass + "tweet-button"}>
                         <img class="tweet-icon" src={tweet} />&nbsp;&nbsp;Tweet About Your Gift
                     </button>

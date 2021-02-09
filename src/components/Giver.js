@@ -28,20 +28,20 @@ export const Giver = ({ state, update, dispatch }) => {
 
     return <>
         <div class={flexClass + 'mb-3 text-center'}>
-            <h5><b>Gift a name on<br />NEAR!</b></h5>
+            <h5><b>Gift a name on<br />NEAR Protocol!</b></h5>
         </div>
 
-        <p>In the spirit of whatever holiday you celebrate... Claim a name for friends and fam on the NEAR blockchain!</p>
+        <p>Claim a name for friends and fam on the NEAR blockchain.</p>
 
         {
             wallet.signedIn ?
                 <>
                     <ul>
-                        <li>Use your tokens to gift a unique NEAR account name {forExample}.</li>
+                        <li>Use your tokens to give a unique NEAR account name {forExample}.</li>
                         <li>Fill in the form below and choose an amount of NEAR to give.</li>
                         <li>Note: 1 NEAR token is used to claim the custom account name and the rest will go in the gifted wallet.</li>
                     </ul>
-                    <p><b>Happy Holidays from your friends at NEAR!</b></p>
+                    <p><b>Welcome to the party, from your friends at NEAR!</b></p>
                 </> :
                 <p>If you have tokens in your <b>NEAR Wallet</b>, <i>Sign In</i> to give the gift of a unique NEAR account {forExample} to your friends and family 🤗</p>
         }
