@@ -5,8 +5,6 @@ import { share } from '../utils/mobile';
 import { flexClass, btnClass, qs } from '../App'
 import { getVideoId } from '../utils/youtube'
 
-import stocking from '../img/stocking.svg'
-
 const forExample = `(for example: "bestie.near" or "squad.near")`
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'))
 const getLink = (accountId, key, wallet, message = '', link = '') => `${baseUrl}?accountId=${accountId}&key=${key}&from=${wallet.getAccountId()}&message=${encodeURIComponent(message)}&link=${getVideoId(link)}`
@@ -39,7 +37,7 @@ export const Giver = ({ state, update, dispatch }) => {
                     <ul>
                         <li>Use your tokens to give a unique NEAR account name {forExample}.</li>
                         <li>Fill in the form below and choose an amount of NEAR to give.</li>
-                        <li>Note: 1 NEAR token is used to claim the custom account name and the rest will go in the gifted wallet.</li>
+                        <li>Note: a small amount of NEAR is used to claim the custom account name and the rest will go in the gifted wallet.</li>
                     </ul>
                     <p><b>Welcome to the party, from your friends at NEAR!</b></p>
                 </> :
@@ -163,12 +161,12 @@ export const Giver = ({ state, update, dispatch }) => {
                     <p class="sub-note">{nameSuffix}</p>
 
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="fundingAmount" placeholder=" " required min="5"
+                        <input type="number" class="form-control" id="fundingAmount" placeholder=" " required min="0.1"
                             onChange={() => checkDisabled()}
                         />
                         <label for="fundingAmount">Gift Amount (N)</label>
                         <div class="invalid-feedback">
-                            Please enter an amount of NEAR > 5
+                            Please enter an amount of NEAR >= 0.1
                         </div>
                     </div>
 

@@ -5,7 +5,7 @@ let config = {
     SEED_PHRASE_LOCAL_COPY: '__SEED_PHRASE_LOCAL_COPY',
     FUNDING_DATA: '__FUNDING_DATA',
     ACCOUNT_LINKS: '__ACCOUNT_LINKS',
-    GAS: new BN('200000000000000').toString(),
+    GAS: '200000000000000',
     networkId: 'default',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
