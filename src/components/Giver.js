@@ -161,7 +161,8 @@ export const Giver = ({ state, update, dispatch }) => {
                     <p class="sub-note">{nameSuffix}</p>
 
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="fundingAmount" placeholder=" " required min="0.1"
+                        <input type="number" class="form-control" id="fundingAmount" placeholder=" " required 
+                            min={0.1} step={0.00001}
                             onChange={() => checkDisabled()}
                         />
                         <label for="fundingAmount">Gift Amount (N)</label>
