@@ -91,8 +91,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         update('app', { accountTaken, wasValidated: true })
     }
     wallet.fundAccount = async (amount, accountId, recipientName) => {
-        if (accountId.indexOf(nameSuffix) > -1) {
-            alert(nameSuffix + ' is added automatically. Please remove it and try again.')
+        if (accountId.indexOf(nameSuffix) > -1 || accountId.indexOf('.') > -1) {
+            alert(nameSuffix + ' is added automatically and no "." is allowed. Please remove and try again.')
             return update('app.wasValidated', true)
         }
         accountId = accountId + nameSuffix

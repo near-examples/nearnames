@@ -143,7 +143,7 @@ export const Giver = ({ state, update, dispatch }) => {
                             required
                             minlength={app.accountTaken ? 999999 : 2}
                             maxlength={48}
-                            pattern="^(([a-z\d]+[\-_])*[a-z\d]+\.)*([a-z\d]+[\-_])*[a-z\d]+$"
+                            pattern="^(([a-z\d]+[\-_])*[a-z\d]+$"
                             autocomplete="off"
                             value={id}
                             onChange={(e) => {
