@@ -6,7 +6,7 @@ let config = {
     FUNDING_DATA: '__FUNDING_DATA',
     ACCOUNT_LINKS: '__ACCOUNT_LINKS',
     GAS: '200000000000000',
-    networkId: 'default',
+    networkId: 'testnet',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
     nameSuffix: '.testnet',
