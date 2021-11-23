@@ -9,6 +9,8 @@ const forExample = `(for example: "bestie.near" or "squad.near")`
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'))
 const getLink = (accountId, key, wallet, message = '', link = '') => `${baseUrl}?accountId=${accountId}&key=${key}&from=${wallet.getAccountId()}&message=${encodeURIComponent(message)}&link=${getVideoId(link)}`
 
+console.log(nameSuffix)
+
 export const Giver = ({ state, update, dispatch }) => {
 
     const {
@@ -149,14 +151,14 @@ export const Giver = ({ state, update, dispatch }) => {
                             onChange={(e) => {
                                 const v = e.target.value.toLowerCase()
                                 setId(v)
-                                wallet.isAccountTaken(v)
+                                // wallet.isAccountTaken(v)
                                 checkDisabled()
                             }}
                         />
                         <label for="accountName">Account Name</label>
                         <div class="invalid-feedback">
                             {app.accountTaken ? 'Account name is already taken' : '2-48 characters, no spaces, no symbols'}
-                        </div>
+						</div>
                     </div>
                     <p class="sub-note">{nameSuffix}</p>
 
