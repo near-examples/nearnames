@@ -96,7 +96,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             alert(nameSuffix + ' is added automatically and no "." is allowed. Please remove and try again.')
             return update('app.wasValidated', true)
         }
-		if (wallet.isAccountTaken(accountId)) {
+		if (await wallet.isAccountTaken(accountId)) {
 			return
 		}
 

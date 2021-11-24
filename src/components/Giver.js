@@ -151,7 +151,7 @@ export const Giver = ({ state, update, dispatch }) => {
                             onChange={(e) => {
                                 const v = e.target.value.toLowerCase()
                                 setId(v)
-                                // wallet.isAccountTaken(v)
+                                wallet.isAccountTaken(v)
                                 checkDisabled()
                             }}
                         />
