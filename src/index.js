@@ -4,8 +4,8 @@ import App from './App';
 import { AppProvider } from './state/app.js';
 
 ReactDOM.render(
-	<AppProvider>
-		<App />
-	</AppProvider>,
-	document.getElementById('root')
+  <AppProvider>
+    <App />
+  </AppProvider>,
+  document.getElementById('root'),
 );
