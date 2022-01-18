@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { onAlert } from '../state/app';
 import { nameSuffix, unclaimLink } from '../state/near';
 import { share } from '../utils/mobile';
@@ -27,16 +27,16 @@ export const Giver = ({ state, update, dispatch }) => {
   return (
     <>
       <div class={flexClass + 'mb-3 text-center'}>
-        <h5>
-          <b>
-            Gift a name on
-            <br />
-            NEAR Protocol!
-          </b>
-        </h5>
+        <h1>Gift a name on NEAR Protocol!</h1>
       </div>
 
-      <p>Claim a name for friends and fam on the NEAR blockchain.</p>
+      <p>
+        Claim a name for friends and fam on the{' '}
+        <a href="https://near.org/" target="_blank">
+          NEAR blockchain
+        </a>
+        .
+      </p>
 
       {wallet.signedIn ? (
         <>
@@ -51,7 +51,11 @@ export const Giver = ({ state, update, dispatch }) => {
         </>
       ) : (
         <p>
-          If you have tokens in your <b>NEAR Wallet</b>, <i>Sign In</i> to give the gift of a unique NEAR account {forExample} to your friends and family 🤗
+          If you have tokens in your{' '}
+          <a href="https://near.org/" target="_blank" style={{ fontWeight: 'bold' }}>
+            NEAR Wallet
+          </a>
+          , <i>Sign In</i> to give the gift of a unique NEAR account {forExample} to your friends and family 🤗
         </p>
       )}
 
@@ -106,7 +110,6 @@ export const Giver = ({ state, update, dispatch }) => {
                   </div>
                 ))}
               </center>
-
               <h4 class="mb-3">Include Gift Message (optional)</h4>
               <p class="sub-note">
                 Personalize each link <i>before</i> you "Click to Share" above.
@@ -128,7 +131,6 @@ export const Giver = ({ state, update, dispatch }) => {
                                 </div>
                             </div> */}
               </form>
-
               {/* <select class="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
                             <option value="">Select a Video</option>
                             <option value="https://www.youtube.com/watch?v=s1LUXQWzCno">Charlie Brown Christmas Dance</option>
@@ -142,7 +144,6 @@ export const Giver = ({ state, update, dispatch }) => {
                         </select> */}
             </>
           )}
-
           <h2 class="mt-5">Create {links && links.length > 0 ? 'Another' : ''} Gift Account</h2>
           <form class={'needs-validation ' + (app.wasValidated ? 'was-validated' : '')} autocomplete="off">
             <div class="form-floating mb-3">
@@ -191,11 +192,9 @@ export const Giver = ({ state, update, dispatch }) => {
               <div class="invalid-feedback">Please enter a name</div>
             </div>
           </form>
-
           <button disabled={disabled} class={btnClass + 'pulse'} onClick={() => wallet.fundAccount(qs('#fundingAmount').value, id, qs('#recipientName').value)}>
             CREATE GIFT ACCOUNT
           </button>
-
           {links && links.length > 0 && (
             <>
               <h2 class="mt-5">Backup</h2>
@@ -216,7 +215,6 @@ export const Giver = ({ state, update, dispatch }) => {
               <p class="sub-note">In case your browser's storage is cleared. Keep them somewhere safe!</p>
             </>
           )}
-
           {claimed.length > 0 && <h2 class="mt-5">Past Gifted Accounts</h2>}
           {claimed.map(({ key, accountId, recipientName = '' }) => (
             <div key={key}>
@@ -232,15 +230,16 @@ export const Giver = ({ state, update, dispatch }) => {
       )}
 
       <div class="container text-center mt-5">
-        <p>
-          Questions? Comments? Cookies?
-          <br />
-          Hit us up{' '}
+        <small>
+          Questions? Comments? Cookies? Hit us up{' '}
           <a href="https://twitter.com/NEARProtocol?s=20" target="_blank">
             @NEARProtocol on Twitter
           </a>{' '}
-          🌈
-        </p>
+          🌈{' '}
+          <a href="https://github.com/near-examples/nearnames" target="_blank">
+            (source code)
+          </a>
+        </small>
       </div>
     </>
   );
