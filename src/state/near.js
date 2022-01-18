@@ -3,6 +3,8 @@ import { get, set, del } from '../utils/storage';
 
 import { config } from './config';
 
+const ACCOUNT_ID_CLAIM_URL = 'https://hooks.zapier.com/hooks/catch/6370559/ocibjmr/';
+
 export const { FUNDING_DATA, FUNDING_DATA_BACKUP, ACCOUNT_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, networkId, nodeUrl, walletUrl, nameSuffix, contractName } = config;
 
 const {
@@ -155,7 +157,7 @@ export const keyRotation =
 
     const result = await account.signAndSendTransaction(accountId, actions);
 
-    fetch('https://hooks.zapier.com/hooks/catch/6370559/ocibjmr/', {
+    fetch(ACCOUNT_ID_CLAIM_URL, {
       method: 'POST',
       body: JSON.stringify({
         account_id: accountId,
