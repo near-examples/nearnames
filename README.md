@@ -11,12 +11,17 @@ yarn start
 
 # How It Works
 
-We have built a Zapier endpoint that handles the smart contract function calls.
+TODO: Document which contracts are involved and what the flow is.
 
-See `ACCOUNT_ID_CLAIM_URL` in [src/state/near.js](src/state/near.js).
+# Analytics
 
-TODO: Document where the Zapier endpoint is configured and what contract it touches.
+We have built a Zapier endpoint that tracks analytics of the accounts created via this tool.
+
+See `ANALYTICS_URL` in [src/state/near.js](src/state/near.js).
+
+TODO: Document where the analytics reports can be viewed and where the Zapier endpoint is configured and how.
 
 # See Also
 
-[OtherInfo.md](OtherInfo.md)
+- https://parceljs.org/recipes/react/
+- [OtherInfo.md](OtherInfo.md)
