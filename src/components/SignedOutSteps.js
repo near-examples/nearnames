@@ -1,5 +1,5 @@
 import React from 'react';
-import screenshot from '/static/connect.png';
+import screenshot from '../img/connect.png';
 
 export default function SignedOutSteps({ forExample }) {
   return (
