@@ -5,6 +5,7 @@ import { share } from '../utils/mobile';
 import { flexClass, btnClass, qs } from '../App';
 import { getVideoId } from '../utils/youtube';
 import SignedOutSteps from './SignedOutSteps';
+import Footer from './Footer';
 
 const forExample = `(for example: "bestie.near" or "squad.near")`;
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'));
@@ -224,18 +225,7 @@ export const Giver = ({ state, update, dispatch }) => {
         </>
       )}
 
-      <div class="container text-center mt-5">
-        <small>
-          Questions? Comments? Cookies? Hit us up{' '}
-          <a href="https://twitter.com/NEARProtocol?s=20" target="_blank">
-            @NEARProtocol on Twitter
-          </a>{' '}
-          🌈{' '}
-          <a href="https://github.com/near-examples/nearnames" target="_blank">
-            (source code)
-          </a>
-        </small>
-      </div>
+      <Footer />
     </>
   );
 };
