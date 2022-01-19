@@ -144,3 +144,20 @@ a {
     transform: scale(1);
   }
 }
+
+/* https://stackoverflow.com/a/39386008/470749 */
+#accordion section a {
+  display: inline-block;
+}
+
+#accordion section div {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in;
+}
+
+#accordion section:target div {
+  max-height: 300px;
+  overflow: none;
+  transition: max-height 0.5s ease-in;
+}

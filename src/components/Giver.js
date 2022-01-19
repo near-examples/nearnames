@@ -7,7 +7,8 @@ import { getVideoId } from '../utils/youtube';
 import SignedOutSteps from './SignedOutSteps';
 import Footer from './Footer';
 
-const forExample = `(for example: "bestie.near" or "squad.near")`;
+const forExample = `(for example: "bestie${nameSuffix}" or "squad${nameSuffix}")`;
+const forExampleWithoutSuffix = forExample.replaceAll(nameSuffix, '');
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'));
 const getLink = (accountId, key, wallet, message = '', link = '') =>
   `${baseUrl}?accountId=${accountId}&key=${key}&from=${wallet.getAccountId()}&message=${encodeURIComponent(message)}&link=${getVideoId(link)}`;
@@ -28,7 +29,7 @@ export const Giver = ({ state, update, dispatch }) => {
 
   return (
     <>
-      <div class={flexClass + 'mb-3 text-center'}>
+      <div className={flexClass + 'mb-3 text-center'}>
         <h1>Gift a name on NEAR Protocol!</h1>
       </div>
 
@@ -42,14 +43,22 @@ export const Giver = ({ state, update, dispatch }) => {
 
       {wallet.signedIn ? (
         <>
-          <ul>
-            <li>Use your tokens to give a unique NEAR account name {forExample}.</li>
-            <li>Fill in the form below and choose an amount of NEAR to give.</li>
-            <li>Note: a small amount of NEAR is used to claim the custom account name and the rest will go in the gifted wallet.</li>
-          </ul>
           <p>
-            <b>Welcome to the party, from your friends at NEAR!</b>
+            Your wallet (<strong>{wallet.getAccountId()}</strong>) currently has a balance of <strong>{wallet.balance} N</strong>.
           </p>
+          <ol>
+            <li className="mb-3">
+              When you <strong>submit the form below</strong>, a new account will be created (using the account name you choose) and will be funded with the amount of NEAR tokens
+              that you're gifting to that account (minus a small amount of NEAR that is used to claim the custom account name).
+            </li>
+            <li className="mb-3">
+              On the following page, <strong>you'll receive a "magic link"</strong> that you'll be able to share with your friend.
+            </li>
+            <li className="mb-3">
+              <strong>Your friend will click the link</strong> that you shared and will then be guided through the easy process of claiming and taking full ownership of that new
+              account.
+            </li>
+          </ol>
         </>
       ) : (
         <SignedOutSteps forExample={forExample} />
@@ -57,13 +66,14 @@ export const Giver = ({ state, update, dispatch }) => {
 
       {wallet.signedIn ? (
         <>
-          <h2>My Wallet</h2>
-          <div class={flexClass}>
-            <p>
-              {wallet.getAccountId()} - {wallet.balance} N
-            </p>
+          <h2 className="pt-3">My Wallet</h2>
+          <div className={flexClass}>
+            <div>
+              <p>{wallet.getAccountId()}</p>
+              <p>Balance: {wallet.balance} N</p>
+            </div>
             <button
-              class={btnClass + 'ms-3'}
+              className={btnClass + 'ms-3'}
               onClick={() => {
                 wallet.signOut();
                 update('wallet.signedIn', false);
@@ -74,8 +84,8 @@ export const Giver = ({ state, update, dispatch }) => {
           </div>
         </>
       ) : (
-        <div class={flexClass}>
-          <button class={btnClass} onClick={() => wallet.signIn()}>
+        <div className={flexClass}>
+          <button className={btnClass} onClick={() => wallet.signIn()}>
             Connect to NEAR Wallet
           </button>
         </div>
@@ -94,7 +104,7 @@ export const Giver = ({ state, update, dispatch }) => {
                     </div>
                     <div>
                       <button
-                        class={btnClass + 'mt-2'}
+                        className={btnClass + 'mt-2'}
                         onClick={() => {
                           share(getLink(accountId, key, wallet, message, link));
                           dispatch(onAlert('Copied!'));
@@ -106,28 +116,28 @@ export const Giver = ({ state, update, dispatch }) => {
                   </div>
                 ))}
               </center>
-              <h4 class="mb-3">Include Gift Message (optional)</h4>
-              <p class="sub-note">
+              <h4 className="mb-3">Include Gift Message (optional)</h4>
+              <p className="sub-note">
                 Personalize each link <i>before</i> you "Click to Share" above.
               </p>
-              <form class={'was-validated'}>
-                <div class="form-floating mb-3">
-                  <textarea type="text" class="form-control" placeholder=" " maxlength="140" value={message} onChange={(e) => setMessage(e.target.value)} />
+              <form className={'was-validated'}>
+                <div className="form-floating mb-3">
+                  <textarea type="text" className="form-control" placeholder=" " maxlength="140" value={message} onChange={(e) => setMessage(e.target.value)} />
                   <label for="fundingAmount">Custom Message</label>
                 </div>
-                {/* <div class="form-floating mb-3" name="yt-link">
-                                <input type="text" class="form-control" placeholder=" "
+                {/* <div className="form-floating mb-3" name="yt-link">
+                                <input type="text" className="form-control" placeholder=" "
                                     value={link}
                                     pattern="(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)"
                                     onChange={(e) => setLink(e.target.value)}
                                 />
                                 <label for="fundingAmount">YouTube Link</label>
-                                <div class="invalid-feedback">
+                                <div className="invalid-feedback">
                                     Not a valid YT link
                                 </div>
                             </div> */}
               </form>
-              {/* <select class="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
+              {/* <select className="form-control" id="video-select" onChange={() => setLink(qs('#video-select').value)}>
                             <option value="">Select a Video</option>
                             <option value="https://www.youtube.com/watch?v=s1LUXQWzCno">Charlie Brown Christmas Dance</option>
                             <option value="https://www.youtube.com/watch?v=ppWrbYC3WwQ">How the Grinch Stole Christmas</option>
@@ -140,12 +150,12 @@ export const Giver = ({ state, update, dispatch }) => {
                         </select> */}
             </>
           )}
-          <h2 class="mt-5">Create {links && links.length > 0 ? 'Another' : ''} Gift Account</h2>
-          <form class={'needs-validation ' + (app.wasValidated ? 'was-validated' : '')} autocomplete="off">
-            <div class="form-floating mb-3">
+          <h2 className="mt-5">Create {links && links.length > 0 ? 'Another' : ''} Gift Account</h2>
+          <form className={'needs-validation ' + (app.wasValidated ? 'was-validated' : '')} autocomplete="off">
+            <div className="form-floating">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="accountName"
                 placeholder=" "
                 required
@@ -161,21 +171,21 @@ export const Giver = ({ state, update, dispatch }) => {
                   checkDisabled();
                 }}
               />
-              <label for="accountName">Account Name</label>
-              <div class="invalid-feedback">{app.accountTaken ? 'Account name is already taken' : '2-48 characters, no spaces, no symbols'}</div>
+              <label for="accountName">Account Name {forExampleWithoutSuffix}</label>
+              <div className="invalid-feedback">{app.accountTaken ? 'Account name is already taken' : '2-48 characters, no spaces, no symbols'}</div>
             </div>
-            <p class="sub-note">{nameSuffix}</p>
+            <small className="text-muted d-block mb-3">The "{nameSuffix}" suffix will be added automatically to this account name.</small>
 
-            <div class="form-floating mb-3">
-              <input type="number" class="form-control" id="fundingAmount" placeholder=" " required min={0.1} step={0.00001} onChange={() => checkDisabled()} />
+            <div className="form-floating mb-3">
+              <input type="number" className="form-control" id="fundingAmount" placeholder=" " required min={0.1} step={0.00001} onChange={() => checkDisabled()} />
               <label for="fundingAmount">Gift Amount (N)</label>
-              <div class="invalid-feedback">Please enter an amount of NEAR &gt;= 0.1</div>
+              <div className="invalid-feedback">Please enter an amount of NEAR &gt;= 0.1</div>
             </div>
 
-            <div class="form-floating mb-3">
+            <div className="form-floating mb-3">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="recipientName"
                 placeholder=" "
                 required
@@ -184,19 +194,30 @@ export const Giver = ({ state, update, dispatch }) => {
                 autocomplete="off"
                 onChange={() => checkDisabled()}
               />
-              <label for="accountName">Recipient Name</label>
-              <div class="invalid-feedback">Please enter a name</div>
+              <label for="recipientName">Recipient Name</label>
+              <section id="accordion">
+                <section id="recipient-name-hint">
+                  <a href="#recipient-name-hint">
+                    <small className="text-muted">How does Recipient Name get used?</small>
+                  </a>
+                  <div>
+                    This form only asks for the Recipient Name so your friend will see a friendly greeting on the page when claiming the account. The Recipient Name does not get
+                    stored in the account anywhere.
+                  </div>
+                </section>
+              </section>
+              <div className="invalid-feedback">Please enter a name</div>
             </div>
           </form>
-          <button disabled={disabled} class={btnClass + 'pulse'} onClick={() => wallet.fundAccount(qs('#fundingAmount').value, id, qs('#recipientName').value)}>
+          <button disabled={disabled} className={btnClass + 'pulse'} onClick={() => wallet.fundAccount(qs('#fundingAmount').value, id, qs('#recipientName').value)}>
             CREATE GIFT ACCOUNT
           </button>
           {links && links.length > 0 && (
             <>
-              <h2 class="mt-5">Backup</h2>
+              <h2 className="mt-5">Backup</h2>
 
               <button
-                class={btnClass + 'mt-3'}
+                className={btnClass + 'mt-3'}
                 onClick={() => {
                   let backupTxt = '';
                   links.forEach(({ key, accountId, recipientName = '' }) => {
@@ -208,16 +229,16 @@ export const Giver = ({ state, update, dispatch }) => {
               >
                 Copy All Gift Links
               </button>
-              <p class="sub-note">In case your browser's storage is cleared. Keep them somewhere safe!</p>
+              <p className="sub-note">In case your browser's storage is cleared. Keep them somewhere safe!</p>
             </>
           )}
-          {claimed.length > 0 && <h2 class="mt-5">Past Gifted Accounts</h2>}
+          {claimed.length > 0 && <h2 className="mt-5">Past Gifted Accounts</h2>}
           {claimed.map(({ key, accountId, recipientName = '' }) => (
             <div key={key}>
-              <p class={'mb-0'}>
+              <p className={'mb-0'}>
                 <strong>{accountId}</strong>: claimed by {recipientName}
               </p>
-              <button class={btnClass + 'mb-3'} onClick={() => dispatch(unclaimLink(key))}>
+              <button className={btnClass + 'mb-3'} onClick={() => dispatch(unclaimLink(key))}>
                 Try Share Link Again
               </button>
             </div>

@@ -92,7 +92,7 @@ export const initNear =
     };
     wallet.fundAccount = async (amount, accountId, recipientName) => {
       if (accountId.indexOf(nameSuffix) > -1 || accountId.indexOf('.') > -1) {
-        alert(nameSuffix + ' is added automatically and no "." is allowed. Please remove and try again.');
+        alert(`The "${nameSuffix}" suffix gets added automatically, so please omit it from the Account Name field. Also, no periods (".") are allowed.`);
         return update('app.wasValidated', true);
       }
       if (await wallet.isAccountTaken(accountId)) {
