@@ -6,7 +6,7 @@ import { Receiver } from './components/Receiver';
 import { Giver } from './components/Giver';
 
 // helpers
-export const btnClass = 'btn btn-sm btn-outline-primary mb-3 ';
+export const btnClass = 'btn btn-lg btn-outline-primary mb-3 ';
 export const flexClass = 'd-flex justify-content-evenly align-items-center ';
 export const qs = (s) => document.querySelector(s);
 

@@ -4,6 +4,7 @@ import { nameSuffix, unclaimLink } from '../state/near';
 import { share } from '../utils/mobile';
 import { flexClass, btnClass, qs } from '../App';
 import { getVideoId } from '../utils/youtube';
+import SignedOutSteps from './SignedOutSteps';
 
 const forExample = `(for example: "bestie.near" or "squad.near")`;
 const baseUrl = window.location.href.substr(0, window.location.href.lastIndexOf('/'));
@@ -30,13 +31,13 @@ export const Giver = ({ state, update, dispatch }) => {
         <h1>Gift a name on NEAR Protocol!</h1>
       </div>
 
-      <p>
-        Claim a name for friends and fam on the{' '}
+      <h4>
+        Claim a name for friends and family on the{' '}
         <a href="https://near.org/" target="_blank">
           NEAR blockchain
         </a>
         .
-      </p>
+      </h4>
 
       {wallet.signedIn ? (
         <>
@@ -50,13 +51,7 @@ export const Giver = ({ state, update, dispatch }) => {
           </p>
         </>
       ) : (
-        <p>
-          If you have tokens in your{' '}
-          <a href="https://near.org/" target="_blank" style={{ fontWeight: 'bold' }}>
-            NEAR Wallet
-          </a>
-          , <i>Sign In</i> to give the gift of a unique NEAR account {forExample} to your friends and family 🤗
-        </p>
+        <SignedOutSteps forExample={forExample} />
       )}
 
       {wallet.signedIn ? (
@@ -80,7 +75,7 @@ export const Giver = ({ state, update, dispatch }) => {
       ) : (
         <div class={flexClass}>
           <button class={btnClass} onClick={() => wallet.signIn()}>
-            Sign In to NEAR Wallet
+            Connect to NEAR Wallet
           </button>
         </div>
       )}
