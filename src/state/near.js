@@ -4,6 +4,7 @@ import { get, set, del } from '../utils/storage';
 import { config } from './config';
 
 const ACCOUNT_ID_CLAIM_URL = 'https://hooks.zapier.com/hooks/catch/6370559/ocibjmr/';
+const SIGN_IN_TITLE = '';
 
 export const { FUNDING_DATA, FUNDING_DATA_BACKUP, ACCOUNT_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, networkId, nodeUrl, walletUrl, nameSuffix, contractName } = config;
 
@@ -74,7 +75,7 @@ export const initNear =
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near);
     wallet.signIn = () => {
-      wallet.requestSignIn(contractName, 'Blah Blah');
+      wallet.requestSignIn(contractName, SIGN_IN_TITLE);
     };
     wallet.signedIn = wallet.isSignedIn();
     if (wallet.signedIn) {
