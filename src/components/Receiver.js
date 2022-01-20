@@ -11,6 +11,8 @@ import tweet from '../img/twitter.webp';
 
 export const Receiver = ({ state, dispatch }) => {
   const { accountId, from, seedPhrase, message, link, keyExists } = state.accountData;
+  const sender = from;
+  const btnSuccessClass = `${btnClass.replace('btn-outline-primary', '')} btn-success pulse`;
 
   const [claiming, setClaiming] = useState(false);
   const [success, setSuccess] = useState(0);
@@ -47,9 +49,9 @@ export const Receiver = ({ state, dispatch }) => {
       <div class="container container-custom">
         <h2>Congratulations!</h2>
         <ul>
-          <li>Your seed phrase is like a password.</li>
+          <li>Your passphrase is like a password.</li>
           <li>Do not share it with anyone!</li>
-          <li>Your account is forever tied to this phrase. You can log into or recover your account with your seed phrase at wallet.near.org from now on!</li>
+          <li>Your account is forever tied to this phrase. You can log into or recover your account with your passphrase at wallet.near.org from now on!</li>
         </ul>
 
         <div class="container text-center mt-5">
@@ -74,7 +76,7 @@ export const Receiver = ({ state, dispatch }) => {
           >
             COPY SEED PHRASE
           </button>
-          <p class="sub-note">This is a local copy in your browser, just in case you didn't write it down. Please write down your seed phrase and keep it somewhere safe!</p>
+          <p class="sub-note">This is a local copy in your browser, just in case you didn't write it down. Please write down your passphrase and keep it somewhere safe!</p>
         </div>
 
         <div class="container text-center mt-5">
@@ -82,7 +84,7 @@ export const Receiver = ({ state, dispatch }) => {
 
           <a
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              `${from} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #NEARName https://nearnames.com/ `,
+              `${sender} gifted me the snazzy NEAR Account Name: ${accountId} @nearprotocol #NEARName https://nearnames.com/ `,
             )}`}
             target="_blank"
           >
@@ -113,12 +115,21 @@ export const Receiver = ({ state, dispatch }) => {
       <div class="text-center mt-3 mb-5">
         <h3>Welcome to NEAR!</h3>
         <p>
-          <b>{from}</b> has gifted you some NEAR tokens and the account name:
+          <b>{sender}</b> has gifted you a brand new{' '}
+          <a href="https://near.org/" target="_blank">
+            NEAR
+          </a>{' '}
+          account (<b>{accountId}</b>), along with some NEAR tokens inside it!
         </p>
-        <p>
-          <b>{accountId}</b>
-        </p>
-        {message && message.length > 0 && <p>{message}</p>}
+
+        {message && message.length > 0 && (
+          <div className="card p-3">
+            <p>
+              Message from <b>{sender}</b>:
+            </p>
+            <p>{message}</p>
+          </div>
+        )}
       </div>
 
       <div class="position-yt mb-3">
@@ -165,52 +176,66 @@ export const Receiver = ({ state, dispatch }) => {
         </div> */}
 
       <div class="instructions">
-        <p>Now this part is on you. Your seed phrase is like an account password, but we do not store it for you and can't recover it if you forget: if you lose it, that's it.</p>
-
-        <ol>
-          <li>Write these 12 words down in this exact order.</li>
-          <li>Do not share them with anyone! This phrase is the key to your NEAR tokens, so keep it somewhere safe.</li>
+        <p>To accept this gift (i.e. claim ownership of your new account), simply follow the steps below.</p>
+        <p>The passphrase that you'll see below is like an account password but with a couple important differences:</p>
+        <ul>
+          <li className="mb-3">
+            Anyone who knows a NEAR account's passphrase has full control of the account without even needing to know the account name. (So keep the passphrase private!)
+          </li>
           <li>
-            Your account is forever tied to this recovery phrase. You can log into or recover your account with your seed phrase at{' '}
+            If you were to forget your passphrase, you'd completely lose access to your account. You would be permanently locked out. (Even the NEAR team does not have the ability
+            to assign a new passphrase to an account.)
+          </li>
+        </ul>
+        <h3>Claim Your New Account</h3>
+        <ol>
+          <li className="mb-3">Click the button below to reveal your passphrase.</li>
+          <li className="mb-3">Write those 12 words down in their exact order.</li>
+          <li className="mb-3">Click the "Claim My Account Now" button once you've safely stored your passphrase somewhere.</li>
+          <li className="mb-3">Do not share your passphrase with anyone! This passphrase controls your NEAR account and its NEAR tokens, so keep it somewhere safe and private.</li>
+          <li>
+            Going forward, you can use your passphrase at{' '}
             <a href={walletUrl} target="_blank">
               wallet.near.org
             </a>{' '}
-            from now on!
+            to access your account.
           </li>
         </ol>
 
         {seedHidden && (
           <button
-            class={btnClass}
+            className={btnClass}
+            style={{ textTransform: 'uppercase' }}
             onClick={() => {
               setSeedHidden(!seedHidden);
             }}
           >
-            REVEAL MY SECRET SEED PHRASE
+            Reveal My Passphrase
           </button>
         )}
 
         <div class="form-floating mb-3">
-          <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} />
-          <label for="seedPhrase">Seed Phrase</label>
+          <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `******** ****  ********  ******` : seedPhrase} />
+          <label for="seedPhrase">Passphrase</label>
         </div>
 
         {!seedHidden && (
           <>
             <button
-              class={btnClass}
+              className={btnClass}
+              style={{ textTransform: 'uppercase' }}
               onClick={() => {
                 share(seedPhrase);
                 dispatch(onAlert('Copied!'));
               }}
             >
-              COPY SEED PHRASE
+              Copy Passphrase
             </button>
 
             <br />
             <center>
               <button
-                class={btnClass + 'pulse'}
+                className={btnSuccessClass}
                 onClick={async () => {
                   setClaiming(true);
                   try {
@@ -228,11 +253,15 @@ export const Receiver = ({ state, dispatch }) => {
                   setClaiming(false);
                 }}
               >
-                I Wrote It Down! CLAIM MY ACCOUNT NOW!
+                I wrote down my passphrase! CLAIM MY ACCOUNT NOW!
               </button>
             </center>
           </>
         )}
+        <small className="text-muted">
+          (Until you click the "Claim My Account" button, the account technically remains available for anyone to claim by visiting this special account claiming page, but
+          presumably you are the only person who knows the URL of this page, other than the friend who sent it to you.)
+        </small>
       </div>
     </>
   );

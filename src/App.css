@@ -36,7 +36,7 @@ textarea {
   max-width: 400px !important;
   height: 100px !important;
 }
-button {
+/* button {
   background: white !important;
 }
 button:active,
@@ -49,7 +49,7 @@ button:active > img,
 button:focus > img,
 button:hover > img {
   filter: brightness(1000);
-}
+} */
 a {
   text-decoration: none !important;
 }
