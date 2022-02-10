@@ -1,6 +1,6 @@
 # NEAR Names
 
-This repo is the source code for https://nearnames.com, which gets deployed automatically via [GitHub Pages](https://pages.github.com/).
+This repo is the source code for https://nearnames.com, which is hosted by [GitHub Pages](https://pages.github.com/). (See the `deploy` script in [package.json](package.json).)
 
 # Local Setup
 
